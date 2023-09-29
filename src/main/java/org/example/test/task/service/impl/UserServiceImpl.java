@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.test.task.dto.UserDto;
 import org.example.test.task.entity.User;
 import org.example.test.task.exception.EmailAlreadyExistsException;
+import org.example.test.task.exception.InvalidRangeException;
 import org.example.test.task.exception.UserNotExistsException;
 import org.example.test.task.mapper.UserMapper;
 import org.example.test.task.service.UserService;
@@ -20,19 +21,18 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
-    private List<User> userDtoList;
-    public ModelMapper modelMapper;
+    private List<User> userList;
 
     @Override
     public UserDto addUser(UserDto userDto) {
         User user = UserMapper.mapToUser(userDto);
         user.setId(UserUtils.getId());
-        if (!userDtoList.contains(user)) {
-            userDtoList.add(user);
+        if (!userList.contains(user)) {
+            userList.add(user);
         } else {
             throw new EmailAlreadyExistsException("User with email " + user.getEmail() + " already exists");
         }
-        User userFromList = userDtoList.stream()
+        User userFromList = userList.stream()
                 .filter(e -> e.getEmail().equals(userDto.getEmail()))
                 .findFirst()
                 .get();
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userDtoList.stream()
+        return userList.stream()
                 .map(UserMapper::mapToUserDto)
                 .collect(Collectors.toList());
     }
@@ -50,10 +50,13 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUserByBirthDateFromTo(String fromDate, String toDate) {
         LocalDate dateFrom = UserMapper.convertToLocalDate(fromDate);
         LocalDate dateTo = UserMapper.convertToLocalDate(toDate);
-        List<User> userList = userDtoList.stream()
+        if (dateFrom.isAfter(dateTo)) {
+            throw new InvalidRangeException("Date must be earlier than date to. Please enter correct dates");
+        }
+        List<User> userListFromTo = userList.stream()
                 .filter(user -> user.getBirthDate().isAfter(dateFrom) & user.getBirthDate().isBefore(dateTo))
                 .collect(Collectors.toList());
-        return userList.stream()
+        return userListFromTo.stream()
                 .map(user -> UserMapper.mapToUserDto(user))
                 .collect(Collectors.toList());
     }
@@ -61,22 +64,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto) {
         User user = UserMapper.mapToUser(userDto);
-        if (userDtoList.contains(user)) {
-            int index = userDtoList.indexOf(user);
-            userDtoList.set(index, user);
-            return UserMapper.mapToUserDto(userDtoList.get(index));
-        } else {
-            throw new UserNotExistsException("User with email " + user.getEmail() + " does not exist");
-        }
+        User userFromList = userList.stream()
+                .filter(userr -> userr.getId().equals(user.getId()))
+                .findFirst()
+                .orElseThrow(() -> new UserNotExistsException("User with id " + user.getId() + " not found"));
+        int index = userList.indexOf(userFromList);
+        userList.set(index, user);
+        return UserMapper.mapToUserDto(userList.get(index));
     }
 
     @Override
     public void deleteUserById(Long id) {
-        User userFromList = userDtoList.stream()
+        User userFromList = userList.stream()
                 .filter(user -> user.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new UserNotExistsException("User with id " + id + " not found"));
-        userDtoList.remove(userFromList);
+        userList.remove(userFromList);
     }
 }
 

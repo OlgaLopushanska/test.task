@@ -21,12 +21,6 @@ public class UserMapper {
     public static User mapToUser(UserDto userDto) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         LocalDate localDate = convertToLocalDate(userDto.getBirthDate());
-//        try {
-//            localDate = LocalDate.parse(userDto.getBirthDate(), formatter);
-//
-//        } catch (DateTimeParseException e) {
-//            throw new InvalidBirthDateException("User", "birthDate", userDto.getBirthDate());
-//        }
         User user = new User(userDto.getId(), userDto.getFirstName(), userDto.getLastName(), userDto.getEmail(),
                 localDate, userDto.getAddress(), userDto.getPhoneNumber());
         return user;
@@ -38,7 +32,7 @@ public class UserMapper {
         try {
             localDate = LocalDate.parse(date, formatter);
         } catch (DateTimeParseException e) {
-            throw new InvalidBirthDateException("User", "birthDate",date);
+            throw new InvalidBirthDateException("User", "birthDate", date);
         }
         return localDate;
     }

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.test.task.utils.CustomDateConstraint;
 
+import java.util.Objects;
+
 
 @AllArgsConstructor
 @Getter
@@ -30,6 +32,19 @@ public class UserDto {
     private String address;
     @NotEmpty(message = "User phone number should not be null or empty")
     private String phoneNumber;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return Objects.equals(email, userDto.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email);
+    }
 }
 
 

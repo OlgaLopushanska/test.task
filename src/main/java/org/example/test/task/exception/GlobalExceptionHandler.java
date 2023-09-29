@@ -20,16 +20,15 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(UserNotFoundException.class)
-//    public ResponseEntity<ErrorDetails> userNotFoundException(UserNotFoundException exception,
-//                                                              WebRequest webRequest) {
-//        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-//                exception.getMessage(),
-//                webRequest.getDescription(false),
-//                "USER_NOT_FOUND");
-//        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
-//
-//    }
+    @ExceptionHandler(InvalidRangeException.class)
+    public ResponseEntity<ErrorDetails> invalidRange(InvalidRangeException exception,
+                                                     WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "INVALID_DATE_RANGE");
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorDetails> emailAlreadyExists(EmailAlreadyExistsException exception,
@@ -43,7 +42,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNotExistsException.class)
     public ResponseEntity<ErrorDetails> userNotExist(UserNotExistsException exception,
-                                                         WebRequest webRequest) {
+                                                     WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
@@ -53,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidBirthDateException.class)
     public ResponseEntity<ErrorDetails> invalidBirthDate(InvalidBirthDateException exception,
-                                                           WebRequest webRequest) {
+                                                         WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
@@ -70,6 +69,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "INTERNAL_SERVER_ERROR");
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         List<ObjectError> errorList = ex.getBindingResult().getAllErrors();
-        errorList.forEach((error)->{
+        errorList.forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
