@@ -45,6 +45,19 @@ public class UserDto {
     public int hashCode() {
         return Objects.hash(id, email);
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", email=" + email +
+                ", birthDate=" + birthDate +
+                ", address=" + address +
+                ", phoneNumber=" + phoneNumber +
+                "}";
+    }
 }
 
 

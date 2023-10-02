@@ -31,7 +31,8 @@ public class UserServiceImplTest {
 
     @Test
     public void addValidUser() {
-        UserDto userDto = new UserDto(1L, "Taras", "Topolia", "topolia@gmail.com", "2003-01-11", "Peremogi 13", "123-12-12");
+        UserDto userDto = new UserDto(1L, "Taras", "Topolia", "topolia@gmail.com",
+                "2003-01-11", "Peremogi 13", "123-12-12");
         UserDto userDtoFromService = userService.addUser(userDto);
         userList.add(UserMapper.mapToUser(userDto));
         assertTrue(userDto.equals(userDtoFromService));
@@ -39,7 +40,8 @@ public class UserServiceImplTest {
 
     @Test
     public void addUserWithEmailAlreadyExist_ThrowException() {
-        UserDto userDto = new UserDto(2L, "Vlad", "Tichina", "tichina@gmail.com", "2000-01-11", "Shevchenka 13", "333-33-33");
+        UserDto userDto = new UserDto(2L, "Vlad", "Tichina", "tichina@gmail.com",
+                "2000-01-11", "Shevchenka 13", "333-33-33");
         UserDto userDtoFromService = userService.addUser(userDto);
         userList.add(UserMapper.mapToUser(userDto));
         assertTrue(userDto.equals(userDtoFromService));
@@ -78,8 +80,8 @@ public class UserServiceImplTest {
     @Test
     public void updateUserWithInvalidId() {
         UserNotExistsException exception = assertThrows(UserNotExistsException.class, () -> {
-            userService.updateUser(new UserDto(100L, "Oleh", "Polonskiy", "pol@gmail.com",
-                    "2000-01-01", "Prorizna 7", "345-45-45"));
+            userService.updateUser(new UserDto(100L, "Oleh", "Polonskiy",
+                    "pol@gmail.com", "2000-01-01", "Prorizna 7", "345-45-45"));
         });
         String expectedMessage = "User with id " + 100 + " not found";
         String actualMessage = exception.getMessage();
@@ -106,17 +108,21 @@ public class UserServiceImplTest {
 
     @Test
     public void getUserByBirthDateFromTo() {
-        userService.addUser(new UserDto(3L, "Pavalo", "Zelenin", "zel@gmail.com", "2002-01-01", "Uborevicha 11", "444-444-44"));
+        userService.addUser(new UserDto(3L, "Pavalo", "Zelenin", "zel@gmail.com",
+                "2002-01-01", "Uborevicha 11", "444-444-44"));
         int size = userService.getUserByBirthDateFromTo(dateFrom, dateTo).stream()
-                .map(user->UserMapper.mapToUser(user))
-                .filter(user -> !user.getBirthDate().isAfter(LocalDate.parse(dateFrom)) & user.getBirthDate().isBefore(LocalDate.parse(dateTo)))
+                .map(user -> UserMapper.mapToUser(user))
+                .filter(user -> !user.getBirthDate().isAfter(LocalDate.parse(dateFrom)) &
+                        user.getBirthDate().isBefore(LocalDate.parse(dateTo)))
                 .collect(Collectors.toList())
                 .size();
         assertEquals(size, 0);
     }
+
     @Test
     public void getUserByBirthDateFromTo_WithInvalidRange() {
-        userService.addUser(new UserDto(3L, "Pavalo", "Zelenin", "zel@gmail.com", "2002-01-01", "Uborevicha 11", "444-444-44"));
+        userService.addUser(new UserDto(3L, "Pavalo", "Zelenin", "zel@gmail.com",
+                "2002-01-01", "Uborevicha 11", "444-444-44"));
         InvalidRangeException exception = assertThrows(InvalidRangeException.class, () -> {
             userService.getUserByBirthDateFromTo(dateTo, dateFrom);
         });

@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto userDto) {
-        return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.OK);
+        return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
@@ -39,7 +39,7 @@ public class UserController {
         return new ResponseEntity<>("User was deleted from the list", HttpStatus.OK);
     }
 
-    @GetMapping("/search")//("/search?from=2/20/2020&EndDate=2/21/2020")
+    @GetMapping("/search")//("/search?from=2/20/2020&to=2/21/2020")
     public ResponseEntity<List<UserDto>> getUserListFromTo(@RequestParam("from") String from, @RequestParam("to") String to) {
         return new ResponseEntity<>(userService.getUserByBirthDateFromTo(from, to), HttpStatus.OK);
 
